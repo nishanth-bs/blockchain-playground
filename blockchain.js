@@ -2,7 +2,7 @@
 //constructor function for blockchain
 function Blockchain(){
   this.chain = [];
-  this.newTransactions = [];
+  this.pendingTransactions = [];
 }
 
 //class
@@ -21,13 +21,13 @@ Blockchain.prototype.createNewBlock = function( nonce, previousBlockHash, hash){
   const newBlock = {
     index : this.chain.length +1,
     timestamp: Date.now(),
-    transactions: this.newTransactions,
+    transactions: this.pendingTransactions,
     nonce: nonce,
     hash: hash,
     previousBlockHash: previousBlockHash
   };
 
-  this.newTransactions = [];
+  this.pendingTransactions = [];
   this.chain.push(newBlock);
 
   return newBlock;
@@ -35,7 +35,22 @@ Blockchain.prototype.createNewBlock = function( nonce, previousBlockHash, hash){
 
 Blockchain.prototype.getLastBlock = function{
   return this.chain[this.chain.length - 1];
-  
+}
+
+Blockchain.prototype.createNewTransaction = function(amount, sender, recipient){
+  //pending transactions which aren't recorder into the blockchainyet
+  // they get validated when  a new block is created
+  //transaction object
+  const newTransaction = {
+    amount: amount,
+    sender: sender,
+    recipient : recipient
+  };
+
+  this.pendingTransactions.push(newTransaction);
+
+  //number of block this transaction will be added to
+  return this.getLastBlock()['index'] + 1;
 }
 
 module.exports = Blockchain;
